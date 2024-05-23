@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 from cli import parse_arguments
 from app import core
