@@ -1,19 +1,19 @@
-import argparse
+import click
 from core import PluginManager
 
-
-def main():
-    parser = argparse.ArgumentParser(description="CASAS cli tool")
-    parser.add_argument('--run-plugins', action='store_true', help='Run all plugins')
-    args = parser.parse_args()
-
-    if args.run_plugins:
-        manager = PluginManager()
-        manager.load_plugins()
-        results = manager.run_plugins()
-        for name, result in results.items():
-            print(f"{name}: {result}")
+manager = PluginManager()
+manager.load_plugins()
 
 
-if __name__ == 'main':
-    main()
+@click.command()
+@click.argument('szi_name', type=click.Choice(manager.plugins.keys()), metavar='SZI_NAME')
+@click.argument('command', type=click.Choice(['status', 'info', 'list']), metavar='COMMAND')
+def cli(szi_name, command):
+    """Security application CLI."""
+    if command == 'list':
+        click.echo("Available SZIs:")
+        for szi in manager.plugins.keys():
+            click.echo(szi)
+    else:
+        result = manager.run_plugin(szi_name, command)
+        click.echo(result)

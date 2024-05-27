@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta
 import json
+from datetime import datetime, timedelta
 
 
 class Plugin:
+    SZI_NAME = "account_info"
     uaDeletedPassword = 1
     uaBlockedPassword = 2
     uaTemporaryPassword = 4
@@ -37,15 +38,19 @@ class Plugin:
 
     def parse_shadow_file(self, shadow_file_path='/etc/shadow'):
         user_status = {}
-        with open(shadow_file_path, 'r') as file:
-            for line in file:
-                fields = line.strip().split(':')
-                username = fields[0]
-                user_status[username] = self.analyze_user_status(self, fields)
+        try:
+            with open(shadow_file_path, 'r') as file:
+                for line in file:
+                    fields = line.strip().split(':')
+                    username = fields[0]
+                    user_status[username] = self.analyze_user_status(fields)
+        except FileNotFoundError:
+            print(f"File {shadow_file_path} not found.")
         return user_status
 
-    def show_status(self, json_output=False):
-        user_status = self.parse_shadow_file(self)
+    def status(self, json_output=False):
+        shadow_file_path = '/etc/shadow'
+        user_status = self.parse_shadow_file(shadow_file_path)
         status_descriptions = {
             1: "deleted password",
             2: "blocked password",
@@ -65,11 +70,10 @@ class Plugin:
             result[user] = flags
 
         if json_output:
-            print(json.dumps(result, indent=4))
+            return json.dumps(result, indent=4)
         else:
             for user, flags in result.items():
                 print(f"User: {user}, Status: {', '.join(flags)}")
 
     def run(self):
-        self.show_status(self, json_output=True)
-
+        print(self.status(json_output=True))

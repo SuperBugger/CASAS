@@ -8,23 +8,25 @@ class PluginManager:
         self.plugins = {}
 
     def load_plugins(self):
-        for plugin in os.listdir(self.plugin_dir):
-            if plugin.endswith('.py') and plugin != '__init__.py':
-                module_name = f"{self.plugin_dir}.{plugin[:-3]}"
+        for filename in os.listdir(self.plugin_dir):
+            if filename.endswith('.py') and filename != 'init.py':
+                module_name = f"{self.plugin_dir}.{filename[:-3]}"
                 try:
                     module = importlib.import_module(module_name)
                     plugin_class = getattr(module, 'Plugin')
-                    self.plugins[plugin[:-3]] = plugin_class
+                    szi_name = getattr(module.Plugin, 'SZI_NAME')
+                    self.plugins[szi_name] = plugin_class()
                 except (ImportError, AttributeError) as e:
                     print(f"Error loading plugin {module_name}: {e}")
 
-    def run_plugins(self):
-        results = {}
-        for name, plugin in self.plugins.items():
-            results[name] = plugin.run(plugin)
-        return results
-
-    def list_plugins(self):
-        for plugin in self.plugins:
-            print(plugin)
-
+    def run_plugin(self, szi_name, command):
+        if szi_name in self.plugins:
+            plugin = self.plugins[szi_name]
+            if command == 'status':
+                return plugin.status()
+            elif command == 'info':
+                return plugin.info()
+            else:
+                return f"Unknown command {command}"
+        else:
+            return f"SZI {szi_name} not found."
