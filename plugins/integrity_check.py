@@ -19,10 +19,11 @@ class Plugin:
         return result
 
     def get_integrity_status(self, json_output: bool = False) -> str:
-        command = ['tripwire', '--check']
+        command = ['md5deep', '-r', '/home/ivandor/Programs']  #todo add the ability to select a directory
         result = self.run_command(command)
         if json_output:
-            return json.dumps({'integrity_status': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
+            return json.dumps({'integrity_status': result["stdout"], 'error': result["stderr"]}, indent=4,
+                              ensure_ascii=False)
         else:
             formatted_output = f"Integrity Check Status:\n{result['stdout']}\n"
             if result["stderr"]:
@@ -30,12 +31,13 @@ class Plugin:
             return formatted_output
 
     def get_integrity_info(self, json_output: bool = False) -> str:
-        command = ['tripwire', '--version']
+        command = ['md5deep', '-version']
         result = self.run_command(command)
         if json_output:
-            return json.dumps({'integrity_info': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
+            return json.dumps({'integrity_info': result["stdout"], 'error': result["stderr"]}, indent=4,
+                              ensure_ascii=False)
         else:
-            formatted_output = f"Integrity Check Information:\n{result['stdout']}\n"
+            formatted_output = f"Integrity Check Information:\nMd5deep version: {result['stdout']}\n"
             if result["stderr"]:
                 formatted_output += f"Error:\n{result['stderr']}\n"
             return formatted_output

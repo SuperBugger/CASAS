@@ -1,43 +1,49 @@
 import subprocess
 import json
+from typing import Dict, Union
+
 
 class Plugin:
     SZI_NAME = "swap_info"
 
-    def get_swap_info(self):
+    def run_command(self, command: list) -> Dict[str, str]:
+        result = {"stdout": "", "stderr": ""}
         try:
-            result = subprocess.run(['swapon', '--show'], capture_output=True, text=True)
-            if result.stdout.strip():
-                return result.stdout.strip()
-            else:
-                return "No swap space configured."
+            process = subprocess.run(command, capture_output=True, text=True, check=True)
+            result["stdout"] = process.stdout.strip()
+            result["stderr"] = process.stderr.strip()
         except FileNotFoundError:
-            return "swapon utility not found."
+            result["stderr"] = f"{command[0]} utility not found."
         except subprocess.CalledProcessError as e:
-            return f"Error getting swap info: {e}"
+            result["stderr"] = f"Error occurred while running {' '.join(command)}: {str(e)}"
+        return result
 
-    def get_swap_usage(self):
-        try:
-            result = subprocess.run(['free', '-h'], capture_output=True, text=True)
-            return result.stdout.strip()
-        except FileNotFoundError:
-            return "free utility not found."
-        except subprocess.CalledProcessError as e:
-            return f"Error getting swap usage: {e}"
-
-    def status(self):
-        swap_info = self.get_swap_info()
-        return self._format_output({'swap_info': swap_info})
-
-    def info(self):
-        swap_usage = self.get_swap_usage()
-        return self._format_output({'swap_usage': swap_usage})
-
-    def _format_output(self, data, json_output=False):
+    def get_swap_info(self, json_output: bool = False) -> str:
+        command = ['swapon', '--show']
+        result = self.run_command(command)
+        if not result["stdout"]:
+            result["stdout"] = "No swap space configured."
         if json_output:
-            return json.dumps(data, indent=4)
+            return json.dumps({'swap_info': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
         else:
-            formatted_output = ''
-            for key, value in data.items():
-                formatted_output += f"{key.capitalize().replace('_', ' ')}:\n{value}\n"
+            formatted_output = f"Swap Information:\n{result['stdout']}\n"
+            if result["stderr"]:
+                formatted_output += f"Error:\n{result['stderr']}\n"
             return formatted_output
+
+    def get_swap_usage(self, json_output: bool = False) -> str:
+        command = ['free', '-h']
+        result = self.run_command(command)
+        if json_output:
+            return json.dumps({'swap_usage': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
+        else:
+            formatted_output = f"Swap Usage:\n{result['stdout']}\n"
+            if result["stderr"]:
+                formatted_output += f"Error:\n{result['stderr']}\n"
+            return formatted_output
+
+    def status(self, json_output: bool = False) -> str:
+        return self.get_swap_info(json_output)
+
+    def info(self, json_output: bool = False) -> str:
+        return self.get_swap_usage(json_output)
