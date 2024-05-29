@@ -1,32 +1,47 @@
 import subprocess
 import json
+from typing import Dict, Union
 
 
 class Plugin:
     SZI_NAME = "integrity_check"
 
-    def get_integrity_status(self):
+    def run_command(self, command: list) -> Dict[str, str]:
+        result = {"stdout": "", "stderr": ""}
         try:
-            result = subprocess.run(['aide', '--check'], capture_output=True, text=True)
-            return result.stdout.strip()
+            process = subprocess.run(command, capture_output=True, text=True, check=True)
+            result["stdout"] = process.stdout.strip()
+            result["stderr"] = process.stderr.strip()
         except FileNotFoundError:
-            return "AIDE (Advanced Intrusion Detection Environment) utility not found."
+            result["stderr"] = f"{command[0]} utility not found."
         except subprocess.CalledProcessError as e:
-            return f"Error running integrity check: {e}"
+            result["stderr"] = f"Error occurred while running {' '.join(command)}: {str(e)}"
+        return result
 
-    def status(self):
-        integrity_status = self.get_integrity_status()
-        return self._format_output({'integrity_status': integrity_status})
-
-    def info(self):
-        integrity_status = self.get_integrity_status()
-        return self._format_output({'integrity_info': integrity_status})
-
-    def _format_output(self, data, json_output=False):
+    def get_integrity_status(self, json_output: bool = False) -> str:
+        command = ['tripwire', '--check']
+        result = self.run_command(command)
         if json_output:
-            return json.dumps(data, indent=4)
+            return json.dumps({'integrity_status': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
         else:
-            formatted_output = ''
-            for key, value in data.items():
-                formatted_output += f"{key.capitalize().replace('_', ' ')}:\n{value}\n"
+            formatted_output = f"Integrity Check Status:\n{result['stdout']}\n"
+            if result["stderr"]:
+                formatted_output += f"Error:\n{result['stderr']}\n"
             return formatted_output
+
+    def get_integrity_info(self, json_output: bool = False) -> str:
+        command = ['tripwire', '--version']
+        result = self.run_command(command)
+        if json_output:
+            return json.dumps({'integrity_info': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
+        else:
+            formatted_output = f"Integrity Check Information:\n{result['stdout']}\n"
+            if result["stderr"]:
+                formatted_output += f"Error:\n{result['stderr']}\n"
+            return formatted_output
+
+    def status(self, json_output: bool = False) -> str:
+        return self.get_integrity_status(json_output)
+
+    def info(self, json_output: bool = False) -> str:
+        return self.get_integrity_info(json_output)

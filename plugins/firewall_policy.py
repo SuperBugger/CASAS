@@ -1,41 +1,42 @@
 import subprocess
 import json
+from typing import Dict, Union
 
 
 class Plugin:
     SZI_NAME = "firewall_policy"
 
-    def get_firewall_status(self):
+    def run_command(self, command: list) -> str:
         try:
-            result = subprocess.run(['ufw', 'status'], capture_output=True, text=True)
-            return result.stdout.strip()
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            output = result.stdout.strip()
         except FileNotFoundError:
-            return "UFW (Uncomplicated Firewall) utility not found."
+            output = f"{command[0]} utility not found."
         except subprocess.CalledProcessError as e:
-            return f"Error getting firewall status: {e}"
+            output = f"Error occurred while running {' '.join(command)}: {str(e)}"
+        return output
 
-    def get_firewall_rules(self):
-        try:
-            result = subprocess.run(['ufw', 'status', 'verbose'], capture_output=True, text=True)
-            return result.stdout.strip()
-        except FileNotFoundError:
-            return "UFW (Uncomplicated Firewall) utility not found."
-        except subprocess.CalledProcessError as e:
-            return f"Error getting firewall rules: {e}"
+    def get_firewall_status(self) -> str:
+        command = ['systemctl', 'status', 'ufw']
+        return self.run_command(command)
 
-    def status(self):
+    def get_firewall_info(self) -> str:
+        command = ['ufw', 'status', 'verbose']
+        return self.run_command(command)
+
+    def status(self, json_output: bool = False) -> str:
         firewall_status = self.get_firewall_status()
-        return self._format_output({'status': firewall_status})
-
-    def info(self):
-        firewall_rules = self.get_firewall_rules()
-        return self._format_output({'rules': firewall_rules})
-
-    def _format_output(self, data, json_output=False):
         if json_output:
-            return json.dumps(data, indent=4)
+            return json.dumps({'status': firewall_status}, indent=4, ensure_ascii=False)
         else:
-            formatted_output = ''
-            for key, value in data.items():
-                formatted_output += f"{key.capitalize()}:\n{value}\n"
+            formatted_output = f"Status:\n{firewall_status}\n"
             return formatted_output
+
+    def info(self, json_output: bool = False) -> str:
+        firewall_info = self.get_firewall_info()
+        if json_output:
+            return json.dumps({'info': firewall_info}, indent=4, ensure_ascii=False)
+        else:
+            formatted_output = f"Info:\n{firewall_info}\n"
+            return formatted_output
+

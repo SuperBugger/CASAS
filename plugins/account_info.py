@@ -10,7 +10,7 @@ class Plugin:
     uaBlockedAccount = 8
     uaInvalidExpireDate = 16
 
-    def analyze_user_status(self, user_info):
+    def analyze_user_info(self, user_info):
         expire_date = (datetime(1970, 1, 1) + timedelta(days=int(user_info[7]))) if user_info[7] != '' and int(
             user_info[7]) != -1 else None
         pwd_length = len(user_info[1])
@@ -37,21 +37,21 @@ class Plugin:
         return flags
 
     def parse_shadow_file(self, shadow_file_path='/etc/shadow'):
-        user_status = {}
+        user_info = {}
         try:
             with open(shadow_file_path, 'r') as file:
                 for line in file:
                     fields = line.strip().split(':')
                     username = fields[0]
-                    user_status[username] = self.analyze_user_status(fields)
+                    user_info[username] = self.analyze_user_info(fields)
         except FileNotFoundError:
             print(f"File {shadow_file_path} not found.")
-        return user_status
+        return user_info
 
-    def status(self, json_output=False):
+    def info(self, json_output=False):
         shadow_file_path = '/etc/shadow'
-        user_status = self.parse_shadow_file(shadow_file_path)
-        status_descriptions = {
+        user_info = self.parse_shadow_file(shadow_file_path)
+        info_descriptions = {
             1: "deleted password",
             2: "blocked password",
             4: "temporary password",
@@ -61,19 +61,20 @@ class Plugin:
 
         result = {}
 
-        for user, status in user_status.items():
+        for user, info in user_info.items():
             flags = []
-            for flag_value, description in sorted(status_descriptions.items(), reverse=True):
-                if status >= flag_value:
+            for flag_value, description in sorted(info_descriptions.items(), reverse=True):
+                if info >= flag_value:
                     flags.append(description)
-                    status -= flag_value
+                    info -= flag_value
             result[user] = flags
 
         if json_output:
             return json.dumps(result, indent=4)
         else:
             for user, flags in result.items():
-                print(f"User: {user}, Status: {', '.join(flags)}")
+                print(f"User: {user}, info: {', '.join(flags)}")
 
-    def run(self):
-        print(self.status(json_output=True))
+    def status(self, json_output=False):
+        # todo: account_info info
+        print("Here will be status")

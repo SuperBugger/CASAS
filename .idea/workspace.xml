@@ -5,19 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e21c635-aae7-402e-b359-4f71fe6d28bd" name="Changes" comment="first plaginable steps">
-      <change afterPath="$PROJECT_DIR$/plugins/antivirus_policy.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugins/firewall_policy.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugins/hosts_policy.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugins/integrity_check.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugins/swap_info.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugins/system_info.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugins/users_policy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/cli.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/core.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/plugins/account_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/account_info.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plugins/password_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/password_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/antivirus_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/antivirus_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/firewall_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/firewall_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/hosts_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/hosts_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/integrity_check.py" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/integrity_check.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,12 +40,12 @@
     &quot;assignee&quot;: &quot;SuperBugger&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/SuperBugger/CASAS.git",
-    "accountId": "51b2dd7b-db70-4c15-8329-a09018f27c6a"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/SuperBugger/CASAS.git&quot;,
+    &quot;accountId&quot;: &quot;51b2dd7b-db70-4c15-8329-a09018f27c6a&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 7
@@ -173,6 +168,8 @@
       <workItem from="1716798515134" duration="731000" />
       <workItem from="1716799335619" duration="8000" />
       <workItem from="1716799369388" duration="15271000" />
+      <workItem from="1716969455864" duration="3042000" />
+      <workItem from="1716972556614" duration="14983000" />
     </task>
     <task id="LOCAL-00001" summary="accounts info with json">
       <option name="closed" value="true" />
@@ -259,6 +256,6 @@
     <SUITE FILE_PATH="coverage/CASAS$setup.coverage" NAME="setup Coverage Results" MODIFIED="1716388857570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/CASAS$accounts_info.coverage" NAME="accounts_info Coverage Results" MODIFIED="1716798791495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/CASAS$core.coverage" NAME="core Coverage Results" MODIFIED="1716469490645" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/CASAS$main.coverage" NAME="main Coverage Results" MODIFIED="1716816869606" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/CASAS$main.coverage" NAME="main Coverage Results" MODIFIED="1716972573524" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

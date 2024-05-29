@@ -19,14 +19,11 @@ class PluginManager:
                 except (ImportError, AttributeError) as e:
                     print(f"Error loading plugin {module_name}: {e}")
 
-    def run_plugin(self, szi_name, command):
-        if szi_name in self.plugins:
-            plugin = self.plugins[szi_name]
+    def run_plugin(self, szi_name, command, json_output):
+        plugin = self.plugins.get(szi_name)
+        if plugin:
             if command == 'status':
-                return plugin.status()
+                return plugin.status(json_output)
             elif command == 'info':
-                return plugin.info()
-            else:
-                return f"Unknown command {command}"
-        else:
-            return f"SZI {szi_name} not found."
+                return plugin.info(json_output)
+        return "Invalid command or plugin"
