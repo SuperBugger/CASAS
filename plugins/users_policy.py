@@ -5,7 +5,7 @@ import json
 class Plugin:
     SZI_NAME = "users_policy"
 
-    def get_users_info(self):
+    def get_users_info(self) -> list:
         users_info = []
         for user in pwd.getpwall():
             user_info = {
@@ -18,7 +18,7 @@ class Plugin:
             users_info.append(user_info)
         return users_info
 
-    def status(self):
+    def get_users_status(self, json_output: bool = False) -> str:
         users_info = self.get_users_info()
         status_info = {}
         for user in users_info:
@@ -26,26 +26,40 @@ class Plugin:
                 'uid': user['uid'],
                 'gid': user['gid']
             }
-        return self._format_output(status_info)
 
-    def info(self):
-        users_info = self.get_users_info()
-        info_info = {}
-        for user in users_info:
-            info_info[user['username']] = {
-                'home_directory': user['home_directory'],
-                'shell': user['shell']
-            }
-        return self._format_output(info_info)
-
-    def _format_output(self, data, json_output=False):
         if json_output:
-            return json.dumps(data, indent=4)
+            return json.dumps(status_info, indent=4, ensure_ascii=False)
         else:
-            formatted_output = ''
-            for username, info in data.items():
+            formatted_output = "Users Status Information:\n"
+            for username, info in status_info.items():
                 formatted_output += f"User: {username}\n"
                 for key, value in info.items():
                     formatted_output += f"{key.capitalize()}: {value}\n"
                 formatted_output += '\n'
             return formatted_output
+
+    def get_users_info_details(self, json_output: bool = False) -> str:
+        users_info = self.get_users_info()
+        info_details = {}
+        for user in users_info:
+            info_details[user['username']] = {
+                'home_directory': user['home_directory'],
+                'shell': user['shell']
+            }
+
+        if json_output:
+            return json.dumps(info_details, indent=4, ensure_ascii=False)
+        else:
+            formatted_output = "Users Info Details:\n"
+            for username, info in info_details.items():
+                formatted_output += f"User: {username}\n"
+                for key, value in info.items():
+                    formatted_output += f"{key.capitalize()}: {value}\n"
+                formatted_output += '\n'
+            return formatted_output
+
+    def status(self, json_output: bool = False) -> str:
+        return self.get_users_status(json_output)
+
+    def info(self, json_output: bool = False) -> str:
+        return self.get_users_info_details(json_output)

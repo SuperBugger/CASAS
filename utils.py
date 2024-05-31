@@ -11,6 +11,5 @@ def run_command(command: list) -> Dict[str, str]:
     except FileNotFoundError:
         result["stderr"] = f"{command[0]} utility not found."
     except subprocess.CalledProcessError as e:
-        result["stdout"] = process.stdout.strip()
         result["stderr"] = f"Error occurred while running {' '.join(command)}: {str(e)}"
     return result
