@@ -1,6 +1,6 @@
 import json
+
 from utils import run_command
-import subprocess
 
 
 class Plugin:
