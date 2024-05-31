@@ -1,11 +1,13 @@
 import platform
 import json
+from typing import Dict
+from utils import run_command
 
 
 class Plugin:
     SZI_NAME = "system_info"
 
-    def get_system_info(self):
+    def get_system_info(self) -> Dict[str, str]:
         system_info = {
             'system': platform.system(),
             'node': platform.node(),
@@ -16,19 +18,29 @@ class Plugin:
         }
         return system_info
 
-    def status(self):
-        system_info = self.get_system_info()
-        return f"System information status: {system_info}"
-
-    def info(self):
-        system_info = self.get_system_info()
-        return self._format_output(system_info)
-
-    def _format_output(self, data, json_output=False):
+    def get_system_status(self, json_output: bool = False) -> str:
+        command = ['uptime']
+        result = run_command(command)
         if json_output:
-            return json.dumps({'system_info': data}, indent=4)
+            return json.dumps({'system_status': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
         else:
-            formatted_output = ''
-            for key, value in data.items():
+            formatted_output = f"System Status:\n{result['stdout']}\n"
+            if result["stderr"]:
+                formatted_output += f"Error:\n{result['stderr']}\n"
+            return formatted_output
+
+    def get_system_details(self, json_output: bool = False) -> str:
+        system_info = self.get_system_info()
+        if json_output:
+            return json.dumps({'system_details': system_info}, indent=4, ensure_ascii=False)
+        else:
+            formatted_output = "System Information Details:\n"
+            for key, value in system_info.items():
                 formatted_output += f"{key.capitalize()}: {value}\n"
             return formatted_output
+
+    def status(self, json_output: bool = False) -> str:
+        return self.get_system_status(json_output)
+
+    def info(self, json_output: bool = False) -> str:
+        return self.get_system_details(json_output)
