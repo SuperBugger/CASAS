@@ -22,9 +22,8 @@ def list_szis():
 def create_szi_command(szi_name):
     @click.command(name=szi_name)
     @click.argument('command', type=click.Choice(['status', 'info']), metavar='COMMAND')
-    @click.option('--directory', '-d', type=click.Path(exists=True, file_okay=False), default='/home/ivandor/Programs'
-                                                                                              '/Telegram',
-                  help='Directory to check for integrity status')
+    @click.option('--directory', '-d', type=click.Path(exists=True, file_okay=False), default='/home/',
+                  help='Directory to check for integrity status (only for integrity_check)')
     @click.option('--json', 'output_json', is_flag=True, help='Output in JSON format')
     def szi_command(command, directory, output_json):
         """Execute a command on a specified SZI."""

@@ -72,9 +72,22 @@ class Plugin:
         if json_output:
             return json.dumps(result, indent=4)
         else:
-            for user, flags in result.items():
-                print(f"User: {user}, info: {', '.join(flags)}")
+            return result
 
     def status(self, json_output=False):
-        # todo: account_info info
-        print("Here will be status")
+
+        user_info = self.parse_shadow_file()
+        total_users = len(user_info)
+        blocked_passwords = sum(1 for flags in user_info.values() if flags & self.uaBlockedPassword)
+        deleted_passwords = sum(1 for flags in user_info.values() if flags & self.uaDeletedPassword)
+
+        status_info = {
+            "total_users": total_users,
+            "blocked_passwords": blocked_passwords,
+            "deleted_passwords": deleted_passwords,
+        }
+
+        if json_output:
+            return json.dumps(status_info, indent=4)
+        else:
+            return status_info

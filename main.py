@@ -1,10 +1,9 @@
 import argparse
 import subprocess
-import sys
 
 
 def run_cli(args):
-    subprocess.run(['python', 'cli_runner.py'] + args)
+    subprocess.run(['python3', 'cli_runner.py'] + args)
 
 
 def run_web_server():
