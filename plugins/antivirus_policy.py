@@ -1,10 +1,13 @@
 import subprocess
 import json
-from typing import Dict, Union
+from typing import Dict
+from plugins.plugin import Plugin
 
 
-class Plugin:
-    SZI_NAME = "antivirus_policy"
+class AntivirusPolicyPlugin(Plugin):
+    def __init__(self):
+        super().__init__(plugin_id="antivirus_policy")
+        self.state_value = "active"
 
     def run_command(self, commands: Dict[str, list], json_output: bool = False) -> str:
         results = {}
@@ -45,9 +48,14 @@ class Plugin:
         }
         return self.run_command(antivirus_commands, json_output)
 
-    def status(self, json_output: bool = False) -> str:
+    def status(self, directory: str = None, json_output: bool = False) -> str:
         return self.get_antivirus_status(json_output)
 
     def info(self, json_output: bool = False) -> str:
         return self.get_antivirus_info(json_output)
 
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value

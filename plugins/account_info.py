@@ -1,14 +1,18 @@
 import json
 from datetime import datetime, timedelta
+from plugins.plugin import Plugin
 
 
-class Plugin:
-    SZI_NAME = "account_info"
+class AccountInfoPlugin(Plugin):
     uaDeletedPassword = 1
     uaBlockedPassword = 2
     uaTemporaryPassword = 4
     uaBlockedAccount = 8
     uaInvalidExpireDate = 16
+
+    def __init__(self):
+        super().__init__(plugin_id="account_info")
+        self.state_value = "active"
 
     def analyze_user_info(self, user_info):
         expire_date = (datetime(1970, 1, 1) + timedelta(days=int(user_info[7]))) if user_info[7] != '' and int(
@@ -74,8 +78,7 @@ class Plugin:
         else:
             return result
 
-    def status(self, json_output=False):
-
+    def status(self, directory: str = None, json_output=False):
         user_info = self.parse_shadow_file()
         total_users = len(user_info)
         blocked_passwords = sum(1 for flags in user_info.values() if flags & self.uaBlockedPassword)
@@ -91,3 +94,9 @@ class Plugin:
             return json.dumps(status_info, indent=4)
         else:
             return status_info
+
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value

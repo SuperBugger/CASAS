@@ -1,10 +1,12 @@
 import subprocess
 import json
-from typing import Dict, Union
+from plugins.plugin import Plugin
 
 
-class Plugin:
-    SZI_NAME = "firewall_policy"
+class FirewallPolicyPlugin(Plugin):
+    def __init__(self):
+        super().__init__(plugin_id="firewall_policy")
+        self.state_value = "active"
 
     def run_command(self, command: list) -> str:
         try:
@@ -24,7 +26,7 @@ class Plugin:
         command = ['ufw', 'status', 'verbose']
         return self.run_command(command)
 
-    def status(self, json_output: bool = False) -> str:
+    def status(self, directory: str = None, json_output: bool = False) -> str:
         firewall_status = self.get_firewall_status()
         if json_output:
             return json.dumps({'status': firewall_status}, indent=4, ensure_ascii=False)
@@ -40,3 +42,8 @@ class Plugin:
             formatted_output = f"Info:\n{firewall_info}\n"
             return formatted_output
 
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value

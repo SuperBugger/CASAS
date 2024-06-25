@@ -1,10 +1,12 @@
 import subprocess
 import json
-from typing import Dict, Union
+from plugins.plugin import Plugin
 
 
-class Plugin:
-    SZI_NAME = "host_policy"
+class HostPolicyPlugin(Plugin):
+    def __init__(self):
+        super().__init__(plugin_id="host_policy")
+        self.state_value = "active"
 
     def run_command(self, command: list) -> str:
         try:
@@ -32,7 +34,7 @@ class Plugin:
         else:
             return host_info
 
-    def status(self, json_output: bool = False) -> str:
+    def status(self, directory: str = None, json_output: bool = False) -> str:
         host_status = self.get_host_status(json_output)
         if json_output:
             return host_status
@@ -47,3 +49,9 @@ class Plugin:
         else:
             formatted_output = f"Host Information:\n{host_info}\n"
             return formatted_output
+
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value

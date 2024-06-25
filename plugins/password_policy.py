@@ -1,10 +1,15 @@
+import datetime
 import json
 import subprocess
-import datetime
+from abc import ABC
+
+from plugins.plugin import Plugin
 
 
-class Plugin:
-    SZI_NAME = "password_policy"
+class PasswordPolicyPlugin(Plugin, ABC):
+    def __init__(self):
+        super().__init__(plugin_id="password_policy")
+        self.state_value = "active"
 
     def read_passwd_file(self, json_output: bool = False) -> str:
         try:
@@ -58,8 +63,14 @@ class Plugin:
             formatted_output += "Users with Empty Passwords:\n" + "\n".join(empty_password_users) + "\n"
             return formatted_output
 
-    def status(self, json_output: bool = False) -> str:
+    def status(self, directory: str = None, json_output: bool = False) -> str:
         return self.get_password_policy_status(json_output)
 
     def info(self, json_output: bool = False) -> str:
         return self.read_passwd_file(json_output)
+
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value

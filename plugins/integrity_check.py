@@ -1,16 +1,19 @@
 import json
-
+from plugins.plugin import Plugin
 from utils import run_command
 
 
-class Plugin:
-    SZI_NAME = "integrity_check"
+class IntegrityCheckPlugin(Plugin):
+    def __init__(self):
+        super().__init__(plugin_id="integrity_check")
+        self.state_value = "active"
 
     def get_integrity_status(self, directory: str, json_output: bool = False) -> str:
         command = ['md5deep', '-r', directory]
         result = run_command(command)
         if json_output:
-            return json.dumps({'integrity_status': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
+            return json.dumps({'integrity_status': result["stdout"], 'error': result["stderr"]}, indent=4,
+                              ensure_ascii=False)
         else:
             formatted_output = f"Integrity Check Status for {directory}:\n{result['stdout']}\n"
             if result["stderr"]:
@@ -37,8 +40,17 @@ class Plugin:
                 formatted_output += f"Error:\n{version_result['stderr']} {which_result['stderr']}\n"
             return formatted_output
 
-    def status(self, directory: str, json_output: bool = False) -> str:
-        return self.get_integrity_status(directory, json_output)
+    def status(self, directory: str = None, json_output: bool = False) -> str:
+        if directory:
+            return self.get_integrity_status(directory, json_output)
+        else:
+            return "No directory specified for integrity check."
 
     def info(self, json_output: bool = False) -> str:
         return self.get_integrity_info(json_output)
+
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value

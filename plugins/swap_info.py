@@ -1,9 +1,12 @@
 import json
 from utils import run_command
+from plugins.plugin import Plugin
 
 
-class Plugin:
-    SZI_NAME = "swap_info"
+class SwapInfoPlugin(Plugin):
+    def __init__(self):
+        super().__init__(plugin_id="swap_info")
+        self.state_value = "active"
 
     def get_swap_status(self, json_output: bool = False) -> str:
         command = ['swapon', '--show']
@@ -18,7 +21,9 @@ class Plugin:
             config_content = "swapshred.conf not found."
 
         if json_output:
-            return json.dumps({'swap_status': result["stdout"], 'swapshred_config': config_content, 'error': result["stderr"]}, indent=4, ensure_ascii=False)
+            return json.dumps(
+                {'swap_status': result["stdout"], 'swapshred_config': config_content, 'error': result["stderr"]},
+                indent=4, ensure_ascii=False)
         else:
             formatted_output = f"Swap Status:\n{result['stdout']}\n\nSwapshred Configuration:\n{config_content}\n"
             if result["stderr"]:
@@ -36,8 +41,14 @@ class Plugin:
                 formatted_output += f"Error:\n{result['stderr']}\n"
             return formatted_output
 
-    def status(self, json_output: bool = False) -> str:
+    def status(self, directory:str = None, json_output: bool = False) -> str:
         return self.get_swap_status(json_output)
 
     def info(self, json_output: bool = False) -> str:
         return self.get_swap_usage(json_output)
+
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value

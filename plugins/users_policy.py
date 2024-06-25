@@ -1,9 +1,12 @@
 import pwd
 import json
+from plugins.plugin import Plugin
 
 
-class Plugin:
-    SZI_NAME = "users_policy"
+class UsersPolicyPlugin(Plugin):
+    def __init__(self):
+        super().__init__(plugin_id="users_policy")
+        self.state_value = "active"
 
     def get_users_info(self) -> list:
         users_info = []
@@ -58,8 +61,14 @@ class Plugin:
                 formatted_output += '\n'
             return formatted_output
 
-    def status(self, json_output: bool = False) -> str:
+    def status(self, directory: str = None, json_output: bool = False) -> str:
         return self.get_users_status(json_output)
 
     def info(self, json_output: bool = False) -> str:
         return self.get_users_info_details(json_output)
+
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value

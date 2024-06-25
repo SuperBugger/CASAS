@@ -2,10 +2,13 @@ import platform
 import json
 from typing import Dict
 from utils import run_command
+from plugins.plugin import Plugin
 
 
-class Plugin:
-    SZI_NAME = "system_info"
+class SystemInfoPlugin(Plugin):
+    def __init__(self):
+        super().__init__(plugin_id="system_info")
+        self.state_value = "active"
 
     def get_system_info(self) -> Dict[str, str]:
         system_info = {
@@ -22,7 +25,8 @@ class Plugin:
         command = ['uptime']
         result = run_command(command)
         if json_output:
-            return json.dumps({'system_status': result["stdout"], 'error': result["stderr"]}, indent=4, ensure_ascii=False)
+            return json.dumps({'system_status': result["stdout"], 'error': result["stderr"]}, indent=4,
+                              ensure_ascii=False)
         else:
             formatted_output = f"System Status:\n{result['stdout']}\n"
             if result["stderr"]:
@@ -39,8 +43,14 @@ class Plugin:
                 formatted_output += f"{key.capitalize()}: {value}\n"
             return formatted_output
 
-    def status(self, json_output: bool = False) -> str:
+    def status(self, directory: str = None, json_output: bool = False) -> str:
         return self.get_system_status(json_output)
 
     def info(self, json_output: bool = False) -> str:
         return self.get_system_details(json_output)
+
+    def id(self) -> str:
+        return self.plugin_id
+
+    def state(self) -> str:
+        return self.state_value
